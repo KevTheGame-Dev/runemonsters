@@ -58,6 +58,9 @@ public class CardKeywords {
     }
 
     public String toString() {
+        if (keywords.isEmpty()) {
+            return "";
+        }
         return keywords.stream().map(CardKeywords::convertToString).collect(Collectors.joining(", "));
     }
 }

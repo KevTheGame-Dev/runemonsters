@@ -4,9 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import javax.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 
 import com.runemonsters.types.Card;
+import com.runemonsters.types.CardPack;
 import com.runemonsters.types.card.CardId;
+import com.runemonsters.types.card.CardRarity;
+import com.runemonsters.types.card.CardSet;
 import net.runelite.api.Client;
 import net.runelite.api.Actor;
 import net.runelite.api.Hitsplat;
@@ -17,20 +21,20 @@ import net.runelite.client.chat.ChatColorType;
 import net.runelite.client.chat.ChatMessageBuilder;
 import net.runelite.client.eventbus.Subscribe;
 
+@Slf4j
 public class CardDrop {
-    private static final boolean DEBUG = true;
-
-    private static final float CARD_CHANCE = 0.005F;
-    private static final float FOIL_CARD_CHANCE = 0.001F;
+    private static final float CARD_CHANCE = 0.01F;
+    private static final float FOIL_CARD_CHANCE = 0.004F;
     private static final float PACK_CHANCE = 0.01F;
-    private static final Map<String, Integer> CARD_PACK_DROPPERS = Map.ofEntries(
-            Map.entry("Kalphite Queen", 965)
+    private static final Map<Integer, CardSet.SET> CARD_PACK_DROPPERS = Map.ofEntries(
+            Map.entry(15626, CardSet.SET.LBDV),// Brutus
+            Map.entry(15627, CardSet.SET.LBDV)// Brutus, probably hard mode
     );
 
     private final Client client;
     private final RuneMonstersPlugin plugin;
 
-    private final Map<Integer, Boolean> hasHitNPC = new HashMap<Integer, Boolean>();
+    private final Map<Integer, Boolean> hasHitNPC = new HashMap<>();
 
     @Inject
     public CardDrop(Client client, RuneMonstersPlugin plugin) {
@@ -60,44 +64,55 @@ public class CardDrop {
             int npcId = npc.getId();
             int npcIndex = npc.getIndex();
 
-            if (!CardUtilities.existsForNpcId(npcId)) {
+            if (hasHitNPC.get(npcIndex) == null || !hasHitNPC.get(npcIndex)) {
+                log.debug("NPC was not killed by player. You can't steal other's drops!");
                 return;
             }
 
-            if (hasHitNPC.get(npcIndex) == null || !hasHitNPC.get(npcIndex)) {
+            if (!CardUtilities.existsForNpcId(npcId)) {
+                log.debug("NPC id not in supported list. It is likely not currently a card. Id: {}", npcId);
                 return;
             }
 
             float roll = new Random().nextFloat();
 
             // this effectively creates a drop table where there is:
-            // - 1/(1/CARD_CHANCE) chance of rolling the card. With current values, this is 1/200
-            // - 1/(1/FOIL_CARD_CHANCE) chance of rolling the foil. With current values, this is 1/1000
+            // - 1/(1/CARD_CHANCE) chance of rolling the card. With current values, this is 1/100
+            // - 1/(1/FOIL_CARD_CHANCE) chance of rolling the foil. With current values, this is 1/250
             // - 1/(1/PACK_CHANCE) chance of rolling the pack. With current values, this is 1/100
-            // - 1/(1 - the above chances) of rolling nothing. With current values, this is 98.4/100
-            if (roll < (CARD_CHANCE + FOIL_CARD_CHANCE + PACK_CHANCE) || DEBUG) {
+            // - 1/(1 - the above chances) of rolling nothing. With current values, this is 97.6/100
+            if (roll < (CARD_CHANCE + FOIL_CARD_CHANCE + PACK_CHANCE) || true) {
                 String cardId = CardUtilities.getCardIdByNpcId(npcId);
                 if (cardId.equals(CardId.UNKNOWN_CARD_ID)) {
-                    System.out.println("RuneMonsters: Card not found by NPC id. It is likely not currently a card.");
+                    log.error("Card not found by NPC id. Cards likely didn't load properly on startup");
                     return;
                 }
 
                 Card card = CardUtilities.getCardById(cardId);
                 if (card == null) {
-                    System.out.println("RuneMonsters: Card not found by id. This is likely caused by cards not loading properly on startup.");
+                    log.error("Card not found by id. Cards likely didn't load properly on startup");
                     return;
                 }
 
                 if (roll < CARD_CHANCE) {
-                    System.out.println("RuneMonsters: Regular card dropped!");
+                    log.debug("Regular card dropped!");
                     this.dropCard(card);
-                } else if (roll < (CARD_CHANCE + FOIL_CARD_CHANCE) || DEBUG) {
-                    System.out.println("RuneMonsters: Foil card dropped!");
-                   this.dropFoilCard(card);
-                } else if (CARD_PACK_DROPPERS.containsKey(npc.getName())){
-                    System.out.println("RuneMonsters: Pack dropped!");
-                    // Drop pack
-                    return;
+                } else if (roll < (CARD_CHANCE + FOIL_CARD_CHANCE)) {
+                    log.debug("RuneMonsters: Foil card dropped!");
+                    this.dropFoilCard(card);
+                } else if (
+                        (roll < (CARD_CHANCE + FOIL_CARD_CHANCE + PACK_CHANCE) || true)
+                                && CARD_PACK_DROPPERS.containsKey(npcId)
+                ){
+                    log.debug("RuneMonsters: Pack dropped! NPC {}", npcId);
+
+                    CardPack pack = new CardPack(
+                            CARD_PACK_DROPPERS.get(npcId),
+                            CardPack.generateCardPackRarity(),
+                            CardPack.generateCardPackFoil()
+                    );
+
+                    this.dropPack(pack);
                 }
             }
         }
@@ -116,6 +131,13 @@ public class CardDrop {
         Card altCard = CardUtilities.getRandomAltCardById(card.cardId.toCSVString());
 
         CardUtilities.gainCard(altCard.cardId.toCSVString());
+    }
+
+    private void dropPack(CardPack pack) {
+        String dropMessage = this.buildCardPackDropMessage(pack);
+        plugin.sendCardMessage(dropMessage);
+
+        log.info(CardUtilities.convertCardListToString(pack.ripPack()));
     }
 
     private String buildCardDropMessage(String cardId) {
@@ -139,6 +161,25 @@ public class CardDrop {
                 .append(cardId)
                 .append(ChatColorType.NORMAL)
                 .append(" - Check the RuneMonster side panel for more details!");
+
+        return message.build();
+    }
+
+    private String buildCardPackDropMessage(CardPack pack) {
+        final ChatMessageBuilder message = new ChatMessageBuilder()
+                .append(ChatColorType.NORMAL)
+                .append("You have received a ")
+                .append(ChatColorType.HIGHLIGHT);
+
+        if (pack.isFoil) {
+            message.append("FOIL ");
+        }
+
+        message.append(CardRarity.convertToString(pack.rarity) + " ")
+               .append(CardSet.convertToString(pack.set) + " ")
+               .append("card pack")
+               .append(ChatColorType.NORMAL)
+               .append(" - Check the RuneMonster side panel for more details!");
 
         return message.build();
     }

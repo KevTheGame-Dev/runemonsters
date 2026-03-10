@@ -9,11 +9,14 @@ import com.runemonsters.types.card.CardSet;
 import com.runemonsters.types.card.CardSubTypes;
 import com.runemonsters.types.card.CardType;
 
+import java.util.ArrayList;
+
 public class Card {
     public final CardId cardId;
     public final String name;
     public final CardSet.SET set;
     public final CardRarity.RARITY rarity;
+    public final Boolean obtainable;
     public final CardCost cost;
     public final CardType.TYPE type;
     public final CardSubTypes subTypes;
@@ -25,6 +28,7 @@ public class Card {
     public final Integer defensiveValue;
     public final Integer health;
     public final String npcIds;
+    public final ArrayList<String> relatedCardIds;
     public final String flavorText;
 
     public Card(
@@ -32,6 +36,7 @@ public class Card {
             String name,
             CardSet.SET set,
             CardRarity.RARITY rarity,
+            Boolean obtainable,
             CardCost cost,
             CardType.TYPE type,
             CardSubTypes subTypes,
@@ -43,12 +48,14 @@ public class Card {
             Integer defensiveValue,
             Integer health,
             String npcIds,
+            ArrayList<String> relatedCardIds,
             String flavorText
     ) {
         this.cardId = cardId;
         this.name = name;
         this.set = set;
         this.rarity = rarity;
+        this.obtainable = obtainable;
         this.cost = cost;
         this.type = type;
         this.subTypes = subTypes;
@@ -60,6 +67,7 @@ public class Card {
         this.defensiveValue = defensiveValue;
         this.health = health;
         this.npcIds = npcIds;
+        this.relatedCardIds = relatedCardIds;
         this.flavorText = flavorText;
     }
 
@@ -79,5 +87,22 @@ public class Card {
                 defensiveWeakness.toString()
         };
         return String.join(",", arr);
+    }
+
+    public String toFallbackText() {
+        return "<html><body style='width: 100%'>" +
+                    "CARD IMAGE NOT LOADING" + "<br>" + "<br>" +
+                    name + "<br>" + "<br>" +
+                    cost.toString() + "<br>" + "<br>" +
+                    CardType.convertToString(type) + " - " + subTypes.toString() + "<br>" + "<br>" +
+                    keywords.toString() + "<br>" + "<br>" +
+                    effect + "<br>" + "<br>" +
+                    "Attack: " + AttackType.convertToString(attackType) +
+                    " " + attackValue + "<br>" +
+                    "Defense: " + AttackType.convertToString(defensiveWeakness) +
+                    " " + defensiveValue + "<br>" +
+                    "HP: " + health + "<br>" + "<br>" +
+                    flavorText +
+                "</body></html>";
     }
 }

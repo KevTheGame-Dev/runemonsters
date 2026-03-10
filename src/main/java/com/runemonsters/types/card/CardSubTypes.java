@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class CardSubTypes {
     public enum MONSTER_SUBTYPE {
@@ -178,5 +179,23 @@ public class CardSubTypes {
         this.monsterSubtypes = monsterSubtypes;
         this.spellSubtypes = spellSubtypes;
         this.equipmentSubtypes = equipmentSubtypes;
+    }
+
+    public String toString() {
+        if (!monsterSubtypes.isEmpty()) {
+            return monsterSubtypes.stream()
+                    .map(CardSubTypes::convertToString)
+                    .collect(Collectors.joining(", "));
+        } else if (!spellSubtypes.isEmpty()) {
+            return spellSubtypes.stream()
+                    .map(CardSubTypes::convertToString)
+                    .collect(Collectors.joining(", "));
+        } else if (!equipmentSubtypes.isEmpty()) {
+            return equipmentSubtypes.stream()
+                    .map(CardSubTypes::convertToString)
+                    .collect(Collectors.joining(", "));
+        } else {
+            return "";
+        }
     }
 }

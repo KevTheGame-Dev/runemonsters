@@ -1,11 +1,17 @@
-id,Name,Set,Rarity,Cost,Type,SubTypes,Keywords,Effect,AttackType,AttackValue,DefensiveWeakness,DefensiveValue,HP,NPCIds,FlavorText
-GIEL-EN000101,Goblin Infrantry,GIEL,Common,1 Bandos,Monster,Goblin,,,Crush,2,None,1,2,"302,830,293,030,303,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000",An ugly green creature.
-GIEL-EN000201,Harold Death Esq,GIEL,MegaRare,6 Guthix,Legendary Monster,Skeleton,,You may play any card from Death's Domain for their cost +1 Guthix devotion,Earth,4,Fire,2,5,,"Death, the inexorable, comes to us all."
-GIEL-EN000301,Muncher,GIEL,Rare,"3 Guthix, 2 Zamorak",Legendary Monster,"Skeleton, Hellhound",Defender,"If Harold Death Esq is also on the owner's board, gain +4 Defense and HP",Slash,4,Water,2,2,,Has an acquired taste for postmen
-GIEL-EN000401,Man,GIEL,Common,1 Saradomin,Monster,Human,,,Crush,2,Stab,1,2,,
-GIEL-EN000501,Woman,GIEL,Common,1 Saradomin,Monster,Human,,,Stab,2,Stab,1,2,,
-GIEL-EN000601,Rat,GIEL,Common,1 Bandos,Monster,Rat,Agile,,Stab,2,Crush,1,1,,
-GIEL-EN000701,Giant Rat,GIEL,Common,"1 Guthix, 3 Bandos",Monster,Rat,Agile,,Stab,3,Crush,1,2,,
-GIEL-EN000801,Frog,GIEL,Common,1 Guthix,Monster,Frog,Leap,,Water,2,Crush,1,1,,
-GIEL-EN000901,Blue Wizard,GIEL,Common,"1 Guthix, 1 Saradomin",Monster,"Human, Wizard",,,Fire,2,Arrow,1,3,,
-GIEL-EN001001,Imp,GIEL,Common,1 Zamorak,Monster,Demon,,,Stab,2,Water,1,1,,
+id,Name,Set,Rarity,Obtainable,Cost,Type,SubTypes,Keywords,Effect,AttackType,AttackValue,DefensiveWeakness,DefensiveValue,HP,NPCIds,RelatedCardIds,FlavorText
+GIEL-EN000101,Goblin Infrantry,GIEL,Common,Yes,1 Bandos,Monster,Goblin,,,Crush,2,None,1,2,"302,830,293,030,303,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000",,An ugly green creature.
+GIEL-EN000201,Harold Death Esq,GIEL,MegaRare,Yes,6 Guthix,Legendary Monster,Skeleton,,You may play any card from Death's Domain for their cost +1 Guthix devotion,Earth,4,Fire,2,5,,,"Death, the inexorable, comes to us all."
+GIEL-EN000301,Muncher,GIEL,Rare,Yes,"3 Guthix, 2 Zamorak",Legendary Monster,"Skeleton, Hellhound",Defender,"If Harold Death Esq is also on the owner's board, gain +4 Defense and HP",Slash,4,Water,2,2,,,Has an acquired taste for postmen
+GIEL-EN000401,Man,GIEL,Common,Yes,1 Saradomin,Monster,Human,,,Crush,2,Stab,1,2,,,
+GIEL-EN000501,Woman,GIEL,Common,Yes,1 Saradomin,Monster,Human,,,Stab,2,Stab,1,2,,,
+GIEL-EN000601,Rat,GIEL,Common,Yes,1 Bandos,Monster,Rat,Agile,,Stab,2,Crush,1,1,,,
+GIEL-EN000701,Giant Rat,GIEL,Common,Yes,"1 Guthix, 3 Bandos",Monster,Rat,Agile,,Stab,3,Crush,1,2,,,
+GIEL-EN000801,Frog,GIEL,Common,Yes,1 Guthix,Monster,Frog,Leap,,Water,2,Crush,1,1,,,
+GIEL-EN000901,Blue Wizard,GIEL,Common,Yes,"1 Guthix, 1 Saradomin",Monster,"Human, Wizard",,,Fire,2,Arrow,1,3,,,
+GIEL-EN001001,Imp,GIEL,Common,Yes,1 Zamorak,Monster,Demon,,,Stab,2,Water,1,1,,,
+GIEL-EN001101,Lesser demon,GIEL,Uncommon,Yes,"2 Guthix, 3 Zamorak",Monster,Demon,,,Slash,5,Water,3,5,,,
+LBDV-EN001801,Big Frog,LBDV,Common,Yes,,Monster,Frog,,,,,,,,,,
+LBDV-EN001901,Giant Frog,LBDV,Uncommon,Yes,,Monster,Frog,,,,,,,,,,
+LBDV-EN005501,Undercover Penguins,LBDV,Rare,Yes,"3 Guthix, 1 Zaros",Monster,"Penguin, Livestock",Guardian,"Upon entering, this card is moved to target opposing player's board. Each turn, the owner of this card must reveal a randomly chosen card from their hand to their opponent(s)",Stab,2,Fire,3,3,,,This sheep looks suspicious.
+LBDV-EN009701,Brutus,LBDV,MegaRare,Yes,3 Guthix,Legendary Monster,Livestock,"Charge, Rage","All Livestock monsters owned by other players get -2 Attack, -2 Defense",Crush,3,Slash,3,3,15626,,
+LBDV-EN009801,Demonic Brutus,LBDV,MegaRare,Yes,6 Guthix,Legendary Monster,"Abyssal, Livestock","Charge, Rage","Upon entering, destroy all other Livestock monsters and gain their attack, defense, and HP. When Demonic Brutus attacks a target, he attacks twice with the second attack dealing half of his Attack value, rounded down.",Crush,3,Slash,3,3,15627,,

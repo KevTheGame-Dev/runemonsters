@@ -3,9 +3,10 @@ package com.runemonsters.types;
 import com.runemonsters.CardUtilities;
 import com.runemonsters.types.card.CardRarity;
 import com.runemonsters.types.card.CardSet;
+import com.runemonsters.util.Util;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class CardPack {
     public final String id;
@@ -25,6 +26,14 @@ public class CardPack {
         this.isFoil = isFoil;
         this.id = generateId();
         this.displayName = generateDisplayName();
+    }
+
+    public static CardRarity.RARITY generateCardPackRarity () {
+        return Util.randomRarityByWeights(50, 30, 15, 5);
+    }
+
+    public static boolean generateCardPackFoil () {
+        return (new Random().nextFloat() * 100 < 5); // ~5% for foil pack
     }
 
     public ArrayList<Card> ripPack () {
@@ -65,11 +74,11 @@ public class CardPack {
         }
 
         ArrayList<Card> cards = new ArrayList<>();
-        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(CardRarity.RARITY.COMMON, guaranteedCommons));
-        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(CardRarity.RARITY.UNCOMMON, guaranteedUncommons));
-        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(CardRarity.RARITY.RARE, guaranteedRares));
-        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(CardRarity.RARITY.MEGARARE, guaranteedMegaRares));
-        cards.addAll(CardUtilities.getNumberOfRandomCard(randomCards));
+        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(set, CardRarity.RARITY.COMMON, guaranteedCommons));
+        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(set, CardRarity.RARITY.UNCOMMON, guaranteedUncommons));
+        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(set, CardRarity.RARITY.RARE, guaranteedRares));
+        cards.addAll(CardUtilities.getNumberOfRandomCardOfRarity(set, CardRarity.RARITY.MEGARARE, guaranteedMegaRares));
+        cards.addAll(CardUtilities.getNumberOfRandomCards(set, randomCards));
 
         return cards;
     }

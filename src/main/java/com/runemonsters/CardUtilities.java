@@ -9,6 +9,8 @@ import com.runemonsters.types.card.CardRarity;
 import com.runemonsters.types.card.CardSet;
 import com.runemonsters.types.card.CardSubTypes;
 import com.runemonsters.types.card.CardType;
+import com.runemonsters.util.Util;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
@@ -29,18 +31,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
+@Slf4j
 public class CardUtilities {
     private static final Random RANDOM = new Random();
     private static final String CARDS_FILE_PATH = "src/main/resources/cards/cards.csv";
     public static final String CARD_IMAGES_PATH = "src/main/resources/cards/images/";
-    public static final ArrayList<Card> ALL_CARDS = new ArrayList<>();
-    public static final Map<String, Card> CARDS_BY_ID = new HashMap<String, Card>();
-    private static final Map<String, List<String>> CARD_IDS_TO_CARD_ALTERNATES = new HashMap<String, List<String>>();
-    private static final Map<Integer, String> SUPPORTED_NPC_IDS_TO_CARD_ID = new HashMap<Integer, String>();
-    private static final ArrayList<Card> COMMON_RARITY_CARDS = new ArrayList<>();
-    private static final ArrayList<Card> UNCOMMON_RARITY_CARDS = new ArrayList<>();
-    private static final ArrayList<Card> RARE_RARITY_CARDS = new ArrayList<>();
-    private static final ArrayList<Card> MEGARARE_RARITY_CARDS = new ArrayList<>();
+    public static final Map<String, Card> CARDS_BY_ID = new HashMap<>();
+    private static final Map<String, List<String>> CARD_IDS_TO_CARD_ALTERNATES = new HashMap<>();
+    private static final Map<Integer, String> SUPPORTED_NPC_IDS_TO_CARD_ID = new HashMap<>();
+    private static final Map<CardSet.SET, ArrayList<Card>> COMMON_RARITY_CARDS = new HashMap<>();
+    private static final Map<CardSet.SET, ArrayList<Card>> UNCOMMON_RARITY_CARDS = new HashMap<>();
+    private static final Map<CardSet.SET, ArrayList<Card>> RARE_RARITY_CARDS = new HashMap<>();
+    private static final Map<CardSet.SET, ArrayList<Card>> MEGARARE_RARITY_CARDS = new HashMap<>();
 
     private static final String UNLOCKED_CARDS_PATH = RuneMonstersPlugin.DATA_DIRECTORY + "unlocked_cards.csv";
     public static final Map<String, Integer> UNLOCKED_CARDS = new HashMap<>();
@@ -56,6 +58,7 @@ public class CardUtilities {
                             "Name",
                             "Set",
                             "Rarity",
+                            "Obtainable",
                             "Cost",
                             "Type",
                             "SubTypes",
@@ -67,6 +70,7 @@ public class CardUtilities {
                             "DefensiveValue",
                             "HP",
                             "NPCIds",
+                            "RelatedCardIds",
                             "FlavorText"
                     )
                     .setSkipHeaderRecord(true)
@@ -82,6 +86,7 @@ public class CardUtilities {
                         record.get("Name"),
                         CardSet.fromString(record.get("Set")),
                         CardRarity.fromString(record.get("Rarity")),
+                        Boolean.parseBoolean(record.get("Obtainable")),
                         CardCost.fromString(record.get("Cost")),
                         CardType.fromString(record.get("Type")),
                         CardSubTypes.fromString(record.get("SubTypes")),
@@ -93,10 +98,18 @@ public class CardUtilities {
                         safeParseInt(record.get("DefensiveValue")),
                         safeParseInt(record.get("HP")),
                         record.get("NPCIds"),
+                        new ArrayList<>(List.of(record.get("RelatedCardIds").split(","))),
                         record.get("FlavorText")
                 );
-                ALL_CARDS.add(card);
                 CARDS_BY_ID.put(cardIdString, card);
+
+                Map<CardSet.SET, ArrayList<Card>> rarityMap = getSetArrayListMap(card);
+                if (rarityMap.containsKey(card.set)) {
+                    rarityMap.get(card.set).add(card);
+                } else {
+                    rarityMap.put(card.set, new ArrayList<>());
+                    rarityMap.get(card.set).add(card);
+                }
 
                 // Populate a mapping of NPC ids to CardIds strings. Used to lookup what card to drop when
                 // an NPC is killed and a drop is received.
@@ -123,7 +136,19 @@ public class CardUtilities {
                 }
             }
         } catch (IOException e) {
-            System.out.println("RuneMonsters: Failed to load cards. Plugin will not work");
+            log.error("Failed to load cards. Plugin will not work");
+        }
+    }
+
+    private static Map<CardSet.SET, ArrayList<Card>> getSetArrayListMap(Card card) {
+        if (card.rarity == CardRarity.RARITY.COMMON) {
+            return COMMON_RARITY_CARDS;
+        } else if (card.rarity == CardRarity.RARITY.UNCOMMON) {
+            return UNCOMMON_RARITY_CARDS;
+        } else if (card.rarity == CardRarity.RARITY.RARE) {
+            return RARE_RARITY_CARDS;
+        } else {
+            return MEGARARE_RARITY_CARDS;
         }
     }
 
@@ -137,27 +162,26 @@ public class CardUtilities {
                     .parse(fileReader);
             for (CSVRecord record : records) {
                 String cardIdString = record.get("id");
-                System.out.println("RuneMonsters: " + record.get("count"));
+                log.debug("RuneMonsters: " + record.get("count"));
                 UNLOCKED_CARDS.put(
                         cardIdString,
                         Integer.parseInt(record.get("count"))
                 );
             }
         } catch (IOException e) {
-            System.out.println("RuneMonsters: Failed to load unlocked cards.");
+            log.error("Failed to load unlocked cards.");
         }
     }
 
     private static void writeUnlockedCardsToFile() {
         synchronized(UNLOCKED_CARDS) {
             File file = new File(UNLOCKED_CARDS_PATH);
-            System.out.println("RuneMonsters: " + UNLOCKED_CARDS_PATH);
             if (!file.exists()) {
                 try {
                     file.createNewFile();
                 } catch (IOException e) {
                     // TODO
-                    System.out.println("RuneMonsters: Could not create unlocked card file" + e);
+                    log.error("Could not create unlocked card file" + e);
                 }
             }
 
@@ -177,7 +201,7 @@ public class CardUtilities {
                 fileWriter.close();
             } catch (IOException e) {
                 // TODO
-                System.out.println("RuneMonsters: Could not write to unlocked card file");
+                log.error("Could not write to unlocked card file");
             }
         }
     }
@@ -209,34 +233,25 @@ public class CardUtilities {
     }
 
 
-    public static Card getRandomCard() {
-        int index = RANDOM.nextInt(ALL_CARDS.size());
-        Card card = ALL_CARDS.get(index);
-
-        // TODO - handle random foil cards
-        return card;
-    }
-    public static ArrayList<Card> getNumberOfRandomCard(Integer numberOfCards) {
-        ArrayList<Card> randomCards = new ArrayList<>();
-
-        for (int i = 0; i < numberOfCards; i++) {
-            Card card = getRandomCard();
-            randomCards.add(card);
+    public static Card getRandomCard(CardSet.SET set) {
+        ArrayList<Card> validCards;
+        CardRarity.RARITY rarity = Util.randomRarityByWeights(25, 25, 25, 25);
+        switch (rarity) {
+            case COMMON: validCards = COMMON_RARITY_CARDS.get(set); break;
+            case UNCOMMON: validCards = UNCOMMON_RARITY_CARDS.get(set); break;
+            case RARE: validCards = RARE_RARITY_CARDS.get(set); break;
+            case MEGARARE: validCards = MEGARARE_RARITY_CARDS.get(set); break;
+            default:
+                log.info("Tried to get random card of an unknown rarity. Defaulted to Common");
+                validCards = COMMON_RARITY_CARDS.get(set);
         }
 
-        // TODO - handle random foil cards
-        return randomCards;
-    }
-    public static Card getRandomCardOfRarity(CardRarity.RARITY rarity) {
-        ArrayList<Card> validCards;
-        switch (rarity) {
-            case COMMON: validCards = COMMON_RARITY_CARDS; break;
-            case UNCOMMON: validCards = UNCOMMON_RARITY_CARDS; break;
-            case RARE: validCards = RARE_RARITY_CARDS; break;
-            case MEGARARE: validCards = MEGARARE_RARITY_CARDS; break;
-            default:
-                System.out.println("Tried to get random card of an unknown rarity. Defaulted to Common");
-                validCards = COMMON_RARITY_CARDS;
+        if (validCards == null) {
+            log.error(
+                    "Could not find ANY cards of set " +
+                            CardSet.convertToString(set) + " and rarity " + CardRarity.convertToString(rarity)
+            );
+            return null;
         }
 
         int index = RANDOM.nextInt(validCards.size());
@@ -245,11 +260,52 @@ public class CardUtilities {
         // TODO - handle random foil cards
         return card;
     }
-    public static ArrayList<Card> getNumberOfRandomCardOfRarity(CardRarity.RARITY rarity, Integer numberOfCards) {
+    public static ArrayList<Card> getNumberOfRandomCards(CardSet.SET set, Integer numberOfCards) {
         ArrayList<Card> randomCards = new ArrayList<>();
 
         for (int i = 0; i < numberOfCards; i++) {
-            Card card = getRandomCardOfRarity(rarity);
+            Card card = getRandomCard(set);
+            randomCards.add(card);
+        }
+
+        // TODO - handle random foil cards
+        return randomCards;
+    }
+    public static Card getRandomCardOfRarity(CardSet.SET set, CardRarity.RARITY rarity) {
+        ArrayList<Card> validCards;
+        switch (rarity) {
+            case COMMON: validCards = COMMON_RARITY_CARDS.get(set); break;
+            case UNCOMMON: validCards = UNCOMMON_RARITY_CARDS.get(set); break;
+            case RARE: validCards = RARE_RARITY_CARDS.get(set); break;
+            case MEGARARE: validCards = MEGARARE_RARITY_CARDS.get(set); break;
+            default:
+                log.info("Tried to get random card of an unknown rarity. Defaulted to Common");
+                validCards = COMMON_RARITY_CARDS.get(set);
+        }
+
+        if (validCards == null) {
+            log.error(
+                    "Could not find ANY cards of set " +
+                            CardSet.convertToString(set) + " and rarity " + CardRarity.convertToString(rarity)
+            );
+            return null;
+        }
+
+        int index = RANDOM.nextInt(validCards.size());
+        Card card = validCards.get(index);
+
+        // TODO - handle random foil cards
+        return card;
+    }
+    public static ArrayList<Card> getNumberOfRandomCardOfRarity(
+            CardSet.SET set,
+            CardRarity.RARITY rarity,
+            Integer numberOfCards
+    ) {
+        ArrayList<Card> randomCards = new ArrayList<>();
+
+        for (int i = 0; i < numberOfCards; i++) {
+            Card card = getRandomCardOfRarity(set, rarity);
             randomCards.add(card);
         }
 
@@ -270,8 +326,16 @@ public class CardUtilities {
         Integer count = UNLOCKED_CARDS.getOrDefault(cardId, 0);
         count += 1;
         UNLOCKED_CARDS.put(cardId, count);
-        System.out.println("RuneMonsters: in gainCard " + UNLOCKED_CARDS.toString());
         asyncWriteUnlockedCardsToFile();
+    }
+
+    public static String convertCardListToString(ArrayList<Card> list) {
+        StringBuilder message = new StringBuilder("[");
+        for (Card card : list) {
+            message.append(card.name).append(", ");
+        }
+        message.append("]");
+        return message.toString();
     }
 
 

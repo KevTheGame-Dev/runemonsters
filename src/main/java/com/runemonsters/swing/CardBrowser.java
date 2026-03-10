@@ -5,6 +5,8 @@ import com.runemonsters.RuneMonstersPlugin;
 import net.runelite.client.ui.ColorScheme;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +38,14 @@ public class CardBrowser extends JFrame {
         setPreferredSize(new Dimension(windowWidth, windowHeight));
 
         cardGrid = new CardGrid(windowWidth, windowHeight, headerHeight, borderPadding);
-        add(cardGrid);
+        add(cardGrid, BorderLayout.CENTER);
+        cardGrid.addComponentListener(new ComponentAdapter()
+        {
+            public void componentResized(ComponentEvent evt) {
+                Component c = (Component)evt.getSource();
+                cardGrid.onResize(c.getWidth(), windowHeight, headerHeight, borderPadding);
+            }
+        });
 
         pack();
     }
@@ -48,6 +57,7 @@ public class CardBrowser extends JFrame {
 //        add(new JLabel("cards: " + stringifiedCardIds));
         //add(new JLabel("testing"));
         cardGrid.refreshUnlocked();
+        //
 
         setVisible(!isVisible());
     }
