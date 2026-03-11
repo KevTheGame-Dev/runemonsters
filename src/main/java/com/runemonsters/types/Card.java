@@ -79,7 +79,7 @@ public class Card {
                 CardSet.convertToString(set),
                 CardRarity.convertToString(rarity),
                 cost.toString(),
-                CardType.convertToString(type),
+                type.toString(),
                 subTypes.toString(),
                 keywords.toString(),
                 effect,
@@ -94,9 +94,9 @@ public class Card {
                     "CARD IMAGE NOT LOADING" + "<br>" + "<br>" +
                     name + "<br>" + "<br>" +
                     cost.toString() + "<br>" + "<br>" +
-                    CardType.convertToString(type) + " - " + subTypes.toString() + "<br>" + "<br>" +
+                    type.toString() + " - " + subTypes.toString() + "<br>" + "<br>" +
                     keywords.toString() + "<br>" + "<br>" +
-                    effect + "<br>" + "<br>" +
+                    //effect + "<br>" + "<br>" +
                     "Attack: " + AttackType.convertToString(attackType) +
                     " " + attackValue + "<br>" +
                     "Defense: " + AttackType.convertToString(defensiveWeakness) +

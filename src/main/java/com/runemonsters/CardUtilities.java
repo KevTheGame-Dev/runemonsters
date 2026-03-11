@@ -88,7 +88,7 @@ public class CardUtilities {
                         CardRarity.fromString(record.get("Rarity")),
                         Boolean.parseBoolean(record.get("Obtainable")),
                         CardCost.fromString(record.get("Cost")),
-                        CardType.fromString(record.get("Type")),
+                        CardType.TYPE.get(record.get("Type")),
                         CardSubTypes.fromString(record.get("SubTypes")),
                         CardKeywords.fromString(record.get("Keywords")),
                         record.get("Effect"),

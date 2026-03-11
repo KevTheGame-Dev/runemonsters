@@ -43,13 +43,6 @@ public class JGenerator {
         return iconButton;
     }
 
-//    public static JLabel createImageLabel(
-//            BufferedImage image,
-//            Integer width,
-//            Integer height
-//    ) {
-//        return new JLabel(new ImageIcon(image.getScaledInstance(width, height, BufferedImage.SCALE_FAST)));
-//    }
     public static CardImageLabel createImageLabel(
             Image image,
             Integer width,

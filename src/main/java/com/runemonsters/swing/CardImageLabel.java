@@ -62,9 +62,7 @@ public class CardImageLabel extends JLabel {
     public void enableGrayscale() {
         if (hasImage) {
             imageIcon.setImage(
-                    GrayFilter.createDisabledImage(
-                            image.getScaledInstance(width, height, BufferedImage.SCALE_FAST)
-                    )
+                GrayFilter.createDisabledImage(image.getScaledInstance(width, height, BufferedImage.SCALE_FAST))
             );
         } else {
            setBackground(Color.decode("#858585"));
