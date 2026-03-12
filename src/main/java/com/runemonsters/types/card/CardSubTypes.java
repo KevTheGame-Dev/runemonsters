@@ -4,144 +4,187 @@ import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CardSubTypes {
     public enum MONSTER_SUBTYPE {
-        NONE,
-        HUMAN,
-        WIZARD,
-        CULINARY,
-        ABERRATION,
-        GOBLIN,
-        FROG,
-        TUTOR,
-        KNIGHT,
-        MARKSMEN,
-        WARRIOR,
-        WITCH,
-        MONK,
-        SLAYER,
-        HAM,
-        SKELETON,
-        HELLHOUND,
-        FARMER,
-        ZOMBIE,
-        FELINE,
-        DEMON,
-        SWINE,
-        BIRD,
-        TROLL,
-        RAT,
-        VAMPYRE,
-        SERPENT,
-        LIVESTOCK,
-        GHOST,
-        BRIGAND,
-        UNICORN,
-        DWARF,
-        ARACHNID,
-        PIRATE,
-        PENGUIN,
-        SLIME,
-        GNOME
+        NONE("None"),
+        HUMAN("Human"),
+        WIZARD("Wizard"),
+        CULINARY("Culinary"),
+        ABERRATION("Aberration"),
+        GOBLIN("Goblin"),
+        FROG("Frog"),
+        TUTOR("Tutor"),
+        KNIGHT("Knight"),
+        MARKSMEN("Marksmen"),
+        WARRIOR("Warrior"),
+        WITCH("Witch"),
+        MONK("Monk"),
+        SLAYER("Slayer"),
+        HAM("H.A.M."),
+        SKELETON("Skeleton"),
+        HELLHOUND("Hellhound"),
+        FARMER("Farmer"),
+        ZOMBIE("Zombie"),
+        FELINE("Feline"),
+        DEMON("Demon"),
+        SWINE("Swine"),
+        BIRD("Bird"),
+        TROLL("Troll"),
+        RAT("Rat"),
+        VAMPYRE("Vampyre"),
+        SERPENT("Serpent"),
+        LIVESTOCK("Livestock"),
+        GHOST("Ghost"),
+        BRIGAND("Brigand"),
+        UNICORN("Unicorn"),
+        DWARF("Dwarf"),
+        ARACHNID("Arachdid"),
+        PIRATE("Pirate"),
+        PENGUIN("Penguin"),
+        SLIME("Slime"),
+        GNOME("Gnome");
+
+        private static final Map<String, MONSTER_SUBTYPE> STRING_MONSTER_SUBTYPE_MAP = Map.ofEntries(
+                Map.entry("None", NONE),
+                Map.entry("Human", HUMAN),
+                Map.entry("Wizard", WIZARD),
+                Map.entry("Culinary", CULINARY),
+                Map.entry("Aberration", ABERRATION),
+                Map.entry("Goblin", GOBLIN),
+                Map.entry("Frog", FROG),
+                Map.entry("Tutor", TUTOR),
+                Map.entry("Knight", KNIGHT),
+                Map.entry("Marksmen", MARKSMEN),
+                Map.entry("Warrior", WARRIOR),
+                Map.entry("Witch", WITCH),
+                Map.entry("Monk", MONK),
+                Map.entry("Slayer", SLAYER),
+                Map.entry("H.A.M.", HAM),
+                Map.entry("Skeleton", SKELETON),
+                Map.entry("Hellhound", HELLHOUND),
+                Map.entry("Farmer", FARMER),
+                Map.entry("Zombie", ZOMBIE),
+                Map.entry("Feline", FELINE),
+                Map.entry("Demon", DEMON),
+                Map.entry("Swine", SWINE),
+                Map.entry("Bird", BIRD),
+                Map.entry("Troll", TROLL),
+                Map.entry("Rat", RAT),
+                Map.entry("Vampyre", VAMPYRE),
+                Map.entry("Serpent", SERPENT),
+                Map.entry("Livestock", LIVESTOCK),
+                Map.entry("Ghost", GHOST),
+                Map.entry("Brigand", BRIGAND),
+                Map.entry("Unicorn", UNICORN),
+                Map.entry("Dwarf", DWARF),
+                Map.entry("Arachdid", ARACHNID),
+                Map.entry("Pirate", PIRATE),
+                Map.entry("Penguin", PENGUIN),
+                Map.entry("Slime", SLIME),
+                Map.entry("Gnome", GNOME)
+        );
+
+        public static MONSTER_SUBTYPE get(String stringVal) {
+            return STRING_MONSTER_SUBTYPE_MAP.getOrDefault(stringVal, NONE);
+        }
+
+        public static String[] toStringArr() {
+            return Arrays.stream(MONSTER_SUBTYPE.values()).map(MONSTER_SUBTYPE::toString).toArray(String[]::new);
+        }
+
+        public static Boolean hasStringVal(String stringVal) {
+            return STRING_MONSTER_SUBTYPE_MAP.containsKey(stringVal);
+        }
+
+        private final String stringVal;
+
+        MONSTER_SUBTYPE(String stringVal) {
+            this.stringVal = stringVal;
+        }
+
+        public String toString() {
+            return stringVal;
+        }
     }
-    private static final Map<MONSTER_SUBTYPE, String> MONSTER_SUBTYPE_TO_STRING_MAP = Map.ofEntries(
-            Map.entry(MONSTER_SUBTYPE.NONE, "None"),
-            Map.entry(MONSTER_SUBTYPE.HUMAN, "Human"),
-            Map.entry(MONSTER_SUBTYPE.WIZARD, "Wizard"),
-            Map.entry(MONSTER_SUBTYPE.CULINARY, "Culinary"),
-            Map.entry(MONSTER_SUBTYPE.ABERRATION, "Aberration"),
-            Map.entry(MONSTER_SUBTYPE.GOBLIN, "Goblin"),
-            Map.entry(MONSTER_SUBTYPE.FROG, "Frog"),
-            Map.entry(MONSTER_SUBTYPE.TUTOR, "Tutor"),
-            Map.entry(MONSTER_SUBTYPE.KNIGHT, "Knight"),
-            Map.entry(MONSTER_SUBTYPE.MARKSMEN, "Marksmen"),
-            Map.entry(MONSTER_SUBTYPE.WARRIOR, "Warrior"),
-            Map.entry(MONSTER_SUBTYPE.WITCH, "Witch"),
-            Map.entry(MONSTER_SUBTYPE.MONK, "Monk"),
-            Map.entry(MONSTER_SUBTYPE.SLAYER, "Slayer"),
-            Map.entry(MONSTER_SUBTYPE.HAM, "H.A.M."),
-            Map.entry(MONSTER_SUBTYPE.SKELETON, "Skeleton"),
-            Map.entry(MONSTER_SUBTYPE.HELLHOUND, "Hellhound"),
-            Map.entry(MONSTER_SUBTYPE.FARMER, "Farmer"),
-            Map.entry(MONSTER_SUBTYPE.ZOMBIE, "Zombie"),
-            Map.entry(MONSTER_SUBTYPE.FELINE, "Feline"),
-            Map.entry(MONSTER_SUBTYPE.DEMON, "Demon"),
-            Map.entry(MONSTER_SUBTYPE.SWINE, "Swine"),
-            Map.entry(MONSTER_SUBTYPE.BIRD, "Bird"),
-            Map.entry(MONSTER_SUBTYPE.TROLL, "Troll"),
-            Map.entry(MONSTER_SUBTYPE.RAT, "Rat"),
-            Map.entry(MONSTER_SUBTYPE.VAMPYRE, "Vampyre"),
-            Map.entry(MONSTER_SUBTYPE.SERPENT, "Serpent"),
-            Map.entry(MONSTER_SUBTYPE.LIVESTOCK, "Livestock"),
-            Map.entry(MONSTER_SUBTYPE.GHOST, "Ghost"),
-            Map.entry(MONSTER_SUBTYPE.BRIGAND, "Brigand"),
-            Map.entry(MONSTER_SUBTYPE.UNICORN, "Unicorn"),
-            Map.entry(MONSTER_SUBTYPE.DWARF, "Dwarf"),
-            Map.entry(MONSTER_SUBTYPE.ARACHNID, "Arachdid"),
-            Map.entry(MONSTER_SUBTYPE.PIRATE, "Pirate"),
-            Map.entry(MONSTER_SUBTYPE.PENGUIN, "Penguin"),
-            Map.entry(MONSTER_SUBTYPE.SLIME, "Slime"),
-            Map.entry(MONSTER_SUBTYPE.GNOME, "Gnome")
-    );
-    private final static Map<String, MONSTER_SUBTYPE> STRING_TO_MONSTER_SUBTYPE_MAP = MapUtils
-            .invertMap(MONSTER_SUBTYPE_TO_STRING_MAP);
 
     public enum SPELL_SUBTYPE {
-        NONE,
-        FOOD,
-        STANDARD,
-        ANCIENT,
-        LUNAR,
-        ARCEUUS,
-        POTION,
+        NONE("None"),
+        FOOD("Food"),
+        STANDARD("Standard"),
+        ANCIENT("Ancient"),
+        LUNAR("Lunar"),
+        ARCEUUS("Arceuus"),
+        POTION("Potion");
+
+        private static final Map<String, SPELL_SUBTYPE> STRING_SPELL_SUBTYPE_MAP = Map.ofEntries(
+                Map.entry("None", NONE),
+                Map.entry("Food", FOOD),
+                Map.entry("Standard", STANDARD),
+                Map.entry("Ancient", ANCIENT),
+                Map.entry("Lunar", LUNAR),
+                Map.entry("Arceuus", ARCEUUS),
+                Map.entry("Potion", POTION)
+        );
+
+        public static SPELL_SUBTYPE get(String stringVal) {
+            return STRING_SPELL_SUBTYPE_MAP.getOrDefault(stringVal, NONE);
+        }
+
+        public static String[] toStringArr() {
+            return Arrays.stream(SPELL_SUBTYPE.values()).map(SPELL_SUBTYPE::toString).toArray(String[]::new);
+        }
+
+        public static Boolean hasStringVal(String stringVal) {
+            return STRING_SPELL_SUBTYPE_MAP.containsKey(stringVal);
+        }
+
+        private final String stringVal;
+
+        SPELL_SUBTYPE(String stringVal) {
+            this.stringVal = stringVal;
+        }
+
+        public String toString() {
+            return stringVal;
+        }
     }
-    private static final Map<SPELL_SUBTYPE, String> SPELL_SUBTYPE_TO_STRING_MAP = Map.ofEntries(
-            Map.entry(SPELL_SUBTYPE.NONE, "None"),
-            Map.entry(SPELL_SUBTYPE.FOOD, "Food"),
-            Map.entry(SPELL_SUBTYPE.STANDARD, "Standard"),
-            Map.entry(SPELL_SUBTYPE.ANCIENT, "Ancient"),
-            Map.entry(SPELL_SUBTYPE.LUNAR, "Lunar"),
-            Map.entry(SPELL_SUBTYPE.ARCEUUS, "Arceuus"),
-            Map.entry(SPELL_SUBTYPE.POTION, "Potion")
-    );
-    private static final Map<String, SPELL_SUBTYPE> STRING_TO_SPELL_SUBTYPE_MAP = MapUtils
-            .invertMap(SPELL_SUBTYPE_TO_STRING_MAP);
 
     public enum EQUIPMENT_SUBTYPE {
-        NONE,
-        ARMOUR
-    }
-    private static final Map<EQUIPMENT_SUBTYPE, String> EQUIPMENT_SUBTYPE_TO_STRING_MAP = Map.ofEntries(
-            Map.entry(EQUIPMENT_SUBTYPE.NONE, "None"),
-            Map.entry(EQUIPMENT_SUBTYPE.ARMOUR, "Armour")
-    );
-    private static final Map<String, EQUIPMENT_SUBTYPE> STRING_TO_EQUIPMENT_SUBTYPE_MAP = MapUtils
-            .invertMap(EQUIPMENT_SUBTYPE_TO_STRING_MAP);
+        NONE("None"),
+        ARMOUR("Armour");
 
-    public static String convertToString(MONSTER_SUBTYPE subtype) {
-        return MONSTER_SUBTYPE_TO_STRING_MAP.getOrDefault(subtype, "None");
-    }
-    public static String convertToString(SPELL_SUBTYPE subtype) {
-        return SPELL_SUBTYPE_TO_STRING_MAP.getOrDefault(subtype, "None");
-    }
-    public static String convertToString(EQUIPMENT_SUBTYPE subtype) {
-        return EQUIPMENT_SUBTYPE_TO_STRING_MAP.getOrDefault(subtype, "None");
-    }
+        private static final Map<String, EQUIPMENT_SUBTYPE> STRING_EQUIPMENT_SUBTYPE_MAP = Map.ofEntries(
+                Map.entry("None", NONE),
+                Map.entry("Armour", ARMOUR)
+        );
 
-    public static MONSTER_SUBTYPE convertMonsterSubTypeFromString(String subtypeString) {
-        return STRING_TO_MONSTER_SUBTYPE_MAP.getOrDefault(subtypeString, MONSTER_SUBTYPE.NONE);
-    }
-    public static SPELL_SUBTYPE convertSpellSubTypeFromString(String subtypeString) {
-        return STRING_TO_SPELL_SUBTYPE_MAP.getOrDefault(subtypeString, SPELL_SUBTYPE.NONE);
-    }
-    public static EQUIPMENT_SUBTYPE convertEquipmentSubTypeFromString(String subtypeString) {
-        return STRING_TO_EQUIPMENT_SUBTYPE_MAP.getOrDefault(subtypeString, EQUIPMENT_SUBTYPE.NONE);
-    }
+        public static EQUIPMENT_SUBTYPE get(String stringVal) {
+            return STRING_EQUIPMENT_SUBTYPE_MAP.getOrDefault(stringVal, NONE);
+        }
 
+        public static String[] toStringArr() {
+            return Arrays.stream(EQUIPMENT_SUBTYPE.values()).map(EQUIPMENT_SUBTYPE::toString).toArray(String[]::new);
+        }
+
+        public static Boolean hasStringVal(String stringVal) {
+            return STRING_EQUIPMENT_SUBTYPE_MAP.containsKey(stringVal);
+        }
+
+        private final String stringVal;
+
+        EQUIPMENT_SUBTYPE(String stringVal) {
+            this.stringVal = stringVal;
+        }
+
+        public String toString() {
+            return stringVal;
+        }
+    }
 
     public static CardSubTypes fromString(String subtypesString) {
         String[] subtypes = StringUtils.split(subtypesString, ",");
@@ -152,14 +195,14 @@ public class CardSubTypes {
 
         for(String subtypeString : subtypes) {
             String trimmed = subtypeString.trim();
-            if (STRING_TO_MONSTER_SUBTYPE_MAP.containsKey(trimmed)) {
-                monsterSubtypes.add(STRING_TO_MONSTER_SUBTYPE_MAP.get(trimmed));
+            if (MONSTER_SUBTYPE.hasStringVal(trimmed)) {
+                monsterSubtypes.add(MONSTER_SUBTYPE.get(trimmed));
             }
-            if (STRING_TO_SPELL_SUBTYPE_MAP.containsKey(trimmed)) {
-                spellSubtypes.add(STRING_TO_SPELL_SUBTYPE_MAP.get(trimmed));
+            if (SPELL_SUBTYPE.hasStringVal(trimmed)) {
+                spellSubtypes.add(SPELL_SUBTYPE.get(trimmed));
             }
-            if (STRING_TO_EQUIPMENT_SUBTYPE_MAP.containsKey(trimmed)) {
-                equipmentSubtypes.add(STRING_TO_EQUIPMENT_SUBTYPE_MAP.get(trimmed));
+            if (EQUIPMENT_SUBTYPE.hasStringVal(trimmed)) {
+                equipmentSubtypes.add(EQUIPMENT_SUBTYPE.get(trimmed));
             }
         }
 
@@ -184,18 +227,30 @@ public class CardSubTypes {
     public String toString() {
         if (!monsterSubtypes.isEmpty()) {
             return monsterSubtypes.stream()
-                    .map(CardSubTypes::convertToString)
+                    .map(MONSTER_SUBTYPE::toString)
                     .collect(Collectors.joining(", "));
         } else if (!spellSubtypes.isEmpty()) {
             return spellSubtypes.stream()
-                    .map(CardSubTypes::convertToString)
+                    .map(SPELL_SUBTYPE::toString)
                     .collect(Collectors.joining(", "));
         } else if (!equipmentSubtypes.isEmpty()) {
             return equipmentSubtypes.stream()
-                    .map(CardSubTypes::convertToString)
+                    .map(EQUIPMENT_SUBTYPE::toString)
                     .collect(Collectors.joining(", "));
         } else {
             return "";
         }
+    }
+
+    public List<String> getMonsterStringList() {
+        return monsterSubtypes.stream().map(MONSTER_SUBTYPE::toString).collect(Collectors.toList());
+    }
+
+    public List<String> getSpellStringList() {
+        return spellSubtypes.stream().map(SPELL_SUBTYPE::toString).collect(Collectors.toList());
+    }
+
+    public List<String> getEquipmentStringList() {
+        return equipmentSubtypes.stream().map(EQUIPMENT_SUBTYPE::toString).collect(Collectors.toList());
     }
 }

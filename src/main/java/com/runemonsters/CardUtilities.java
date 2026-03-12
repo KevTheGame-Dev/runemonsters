@@ -84,17 +84,17 @@ public class CardUtilities {
                 Card card = new Card(
                         cardId,
                         record.get("Name"),
-                        CardSet.fromString(record.get("Set")),
-                        CardRarity.fromString(record.get("Rarity")),
+                        CardSet.SET.get(record.get("Set")),
+                        CardRarity.RARITY.get(record.get("Rarity")),
                         Boolean.parseBoolean(record.get("Obtainable")),
                         CardCost.fromString(record.get("Cost")),
                         CardType.TYPE.get(record.get("Type")),
                         CardSubTypes.fromString(record.get("SubTypes")),
                         CardKeywords.fromString(record.get("Keywords")),
                         record.get("Effect"),
-                        AttackType.fromString(record.get("AttackType")),
+                        AttackType.ATTACK_TYPE.get(record.get("AttackType")),
                         safeParseInt(record.get("AttackValue")),
-                        AttackType.fromString(record.get("DefensiveWeakness")),
+                        AttackType.ATTACK_TYPE.get(record.get("DefensiveWeakness")),
                         safeParseInt(record.get("DefensiveValue")),
                         safeParseInt(record.get("HP")),
                         record.get("NPCIds"),
@@ -249,7 +249,7 @@ public class CardUtilities {
         if (validCards == null) {
             log.error(
                     "Could not find ANY cards of set " +
-                            CardSet.convertToString(set) + " and rarity " + CardRarity.convertToString(rarity)
+                            set.toString() + " and rarity " + rarity.toString()
             );
             return null;
         }
@@ -286,7 +286,7 @@ public class CardUtilities {
         if (validCards == null) {
             log.error(
                     "Could not find ANY cards of set " +
-                            CardSet.convertToString(set) + " and rarity " + CardRarity.convertToString(rarity)
+                            set.toString() + " and rarity " + rarity
             );
             return null;
         }

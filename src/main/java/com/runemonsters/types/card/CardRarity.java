@@ -2,31 +2,42 @@ package com.runemonsters.types.card;
 
 import org.apache.commons.collections4.MapUtils;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class CardRarity {
     public enum RARITY {
-        UNKNOWN,
-        COMMON,
-        UNCOMMON,
-        RARE,
-        MEGARARE
-    }
+        UNKNOWN("Unknown"),
+        COMMON("Common"),
+        UNCOMMON("Uncommon"),
+        RARE("Rare"),
+        MEGARARE("MegaRare");
 
-    private static final Map<RARITY, String> RARITY_TO_STRING_MAP = Map.ofEntries(
-            Map.entry(RARITY.UNKNOWN, "Unknown"),
-            Map.entry(RARITY.COMMON, "Common"),
-            Map.entry(RARITY.UNCOMMON, "Uncommon"),
-            Map.entry(RARITY.RARE, "Rare"),
-            Map.entry(RARITY.MEGARARE, "MegaRare")
-    );
-    private static final Map<String, RARITY> STRING_TO_RARITY_MAP = MapUtils.invertMap(RARITY_TO_STRING_MAP);
+        private static final Map<String, RARITY> STRING_RARITY_MAP = Map.ofEntries(
+                Map.entry("Unknown", UNKNOWN),
+                Map.entry("Common", COMMON),
+                Map.entry("Uncommon", UNCOMMON),
+                Map.entry("Rare", RARE),
+                Map.entry("MegaRare", MEGARARE)
+        );
+
+        public static RARITY get(String stringVal) {
+            return STRING_RARITY_MAP.getOrDefault(stringVal, UNKNOWN);
+        }
+
+        public static String[] toStringArr() {
+            return Arrays.stream(RARITY.values()).map(RARITY::toString).toArray(String[]::new);
+        }
 
 
-    public static String convertToString(RARITY rarity) {
-        return RARITY_TO_STRING_MAP.getOrDefault(rarity, "Unknown");
-    }
-    public static RARITY fromString(String rarityString) {
-        return STRING_TO_RARITY_MAP.getOrDefault(rarityString, RARITY.UNKNOWN);
+        private final String stringVal;
+
+        RARITY(String stringVal) {
+            this.stringVal = stringVal;
+        }
+
+        public String toString() {
+            return stringVal;
+        }
     }
 }

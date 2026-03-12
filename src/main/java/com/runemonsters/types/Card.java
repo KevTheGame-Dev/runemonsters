@@ -76,14 +76,14 @@ public class Card {
                 cardId.toCSVString(),
                 name,
                 npcIds,
-                CardSet.convertToString(set),
-                CardRarity.convertToString(rarity),
+                set.toString(),
+                rarity.toString(),
                 cost.toString(),
                 type.toString(),
                 subTypes.toString(),
                 keywords.toString(),
                 effect,
-                AttackType.convertToString(attackType),
+                attackType.toString(),
                 defensiveWeakness.toString()
         };
         return String.join(",", arr);
@@ -97,9 +97,9 @@ public class Card {
                     type.toString() + " - " + subTypes.toString() + "<br>" + "<br>" +
                     keywords.toString() + "<br>" + "<br>" +
                     //effect + "<br>" + "<br>" +
-                    "Attack: " + AttackType.convertToString(attackType) +
+                    "Attack: " + attackType.toString() +
                     " " + attackValue + "<br>" +
-                    "Defense: " + AttackType.convertToString(defensiveWeakness) +
+                    "Defense: " + defensiveWeakness.toString() +
                     " " + defensiveValue + "<br>" +
                     "HP: " + health + "<br>" + "<br>" +
                     flavorText +

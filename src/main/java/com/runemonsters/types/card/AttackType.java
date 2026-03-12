@@ -2,42 +2,54 @@ package com.runemonsters.types.card;
 
 import org.apache.commons.collections4.MapUtils;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class AttackType {
     public enum ATTACK_TYPE {
-        CRUSH,
-        SLASH,
-        STAB,
-        AIR,
-        WATER,
-        EARTH,
-        FIRE,
-        BOLT,
-        ARROW,
-        DART,
-        NONE
-    }
-    private static final Map<ATTACK_TYPE, String> ATTACK_TYPE_TO_STRING_MAP = Map.ofEntries(
-            Map.entry(ATTACK_TYPE.CRUSH, "Crush"),
-            Map.entry(ATTACK_TYPE.SLASH, "Slash"),
-            Map.entry(ATTACK_TYPE.STAB, "Stab"),
-            Map.entry(ATTACK_TYPE.AIR, "Air"),
-            Map.entry(ATTACK_TYPE.WATER, "Water"),
-            Map.entry(ATTACK_TYPE.EARTH, "Earth"),
-            Map.entry(ATTACK_TYPE.FIRE, "Fire"),
-            Map.entry(ATTACK_TYPE.BOLT, "Bolt"),
-            Map.entry(ATTACK_TYPE.ARROW, "Arrow"),
-            Map.entry(ATTACK_TYPE.DART, "Dart"),
-            Map.entry(ATTACK_TYPE.NONE, "None")
-    );
-    private static final Map<String, ATTACK_TYPE> STRING_TO_ATTACK_TYPE_MAP = MapUtils.invertMap(ATTACK_TYPE_TO_STRING_MAP);
+        CRUSH("Crush"),
+        SLASH("Slash"),
+        STAB("Stab"),
+        AIR("Air"),
+        WATER("Water"),
+        EARTH("Earth"),
+        FIRE("Fire"),
+        BOLT("Bolt"),
+        ARROW("Arrow"),
+        DART("Dart"),
+        NONE("None");
+
+        private static final Map<String, ATTACK_TYPE> STRING_ATTACK_TYPE_MAP = Map.ofEntries(
+                Map.entry("Crush", CRUSH),
+                Map.entry("Slash", SLASH),
+                Map.entry("Stab", STAB),
+                Map.entry("Air", AIR),
+                Map.entry("Water", WATER),
+                Map.entry("Earth", EARTH),
+                Map.entry("Fire", FIRE),
+                Map.entry("Bolt", BOLT),
+                Map.entry("Arrow", ARROW),
+                Map.entry("Dart", DART),
+                Map.entry("None", NONE)
+        );
+
+        public static ATTACK_TYPE get(String stringVal) {
+            return STRING_ATTACK_TYPE_MAP.getOrDefault(stringVal, NONE);
+        }
+
+        public static String[] toStringArr() {
+            return Arrays.stream(ATTACK_TYPE.values()).map(ATTACK_TYPE::toString).toArray(String[]::new);
+        }
 
 
-    public static String convertToString(ATTACK_TYPE attackType) {
-       return ATTACK_TYPE_TO_STRING_MAP.getOrDefault(attackType, "None");
-    }
-    public static ATTACK_TYPE fromString(String attackTypeString) {
-        return STRING_TO_ATTACK_TYPE_MAP.getOrDefault(attackTypeString, ATTACK_TYPE.NONE);
+        private final String stringVal;
+
+        ATTACK_TYPE(String stringVal) {
+            this.stringVal = stringVal;
+        }
+
+        public String toString() {
+            return stringVal;
+        }
     }
 }

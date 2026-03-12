@@ -175,8 +175,8 @@ public class CardDrop {
             message.append("FOIL ");
         }
 
-        message.append(CardRarity.convertToString(pack.rarity) + " ")
-               .append(CardSet.convertToString(pack.set) + " ")
+        message.append(pack.rarity.toString() + " ")
+               .append(pack.set.toString() + " ")
                .append("card pack")
                .append(ChatColorType.NORMAL)
                .append(" - Check the RuneMonster side panel for more details!");

@@ -1,37 +1,47 @@
 package com.runemonsters.types.card;
 
-import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 public class CardKeywords {
     public enum KEYWORD {
-        NONE,
-        DEFENDER,
-        AGILE,
-        GUARDIAN,
-        LEAP
-    }
+        NONE("None"),
+        DEFENDER("Defender"),
+        AGILE("Agile"),
+        GUARDIAN("Guardian"),
+        LEAP("Leap");
 
-    private static final Map<KEYWORD, String> KEYWORD_TO_STRING_MAP = Map.ofEntries(
-            Map.entry(KEYWORD.NONE, "None"),
-            Map.entry(KEYWORD.DEFENDER, "Crush"),
-            Map.entry(KEYWORD.AGILE, "Slash"),
-            Map.entry(KEYWORD.GUARDIAN, "Stab"),
-            Map.entry(KEYWORD.LEAP, "Air")
-    );
-    private static final Map<String, KEYWORD> STRING_TO_KEYWORD_MAP = MapUtils.invertMap(KEYWORD_TO_STRING_MAP);
+        private static final Map<String, KEYWORD> STRING_KEYWORD_MAP = Map.ofEntries(
+                Map.entry("None", NONE),
+                Map.entry("Defender", DEFENDER),
+                Map.entry("Agile", AGILE),
+                Map.entry("Guardian", GUARDIAN),
+                Map.entry("Leap", LEAP)
+        );
+
+        public static KEYWORD get(String stringVal) {
+            return STRING_KEYWORD_MAP.getOrDefault(stringVal, KEYWORD.NONE);
+        }
+
+        public static String[] toStringArr() {
+            return Arrays.stream(KEYWORD.values()).map(KEYWORD::toString).toArray(String[]::new);
+        }
 
 
-    public static String convertToString(KEYWORD keyword) {
-        return KEYWORD_TO_STRING_MAP.getOrDefault(keyword, "None");
-    }
-    public static KEYWORD convertFromString(String keywordString) {
-        return STRING_TO_KEYWORD_MAP.getOrDefault(keywordString, KEYWORD.NONE);
+        private final String stringVal;
+
+        KEYWORD(String stringVal) {
+            this.stringVal = stringVal;
+        }
+
+        public String toString() {
+            return stringVal;
+        }
     }
 
     public static CardKeywords fromString(String keywordsString) {
@@ -41,7 +51,7 @@ public class CardKeywords {
 
         for(String keywordString : keywordsArr) {
             String trimmed = keywordString.trim();
-            KEYWORD keyword = convertFromString(trimmed);
+            KEYWORD keyword = KEYWORD.get(trimmed);
 
             if (!keywords.contains(keyword)) {
                keywords.add(keyword);
@@ -51,16 +61,20 @@ public class CardKeywords {
         return new CardKeywords(keywords);
     }
 
-    public List<KEYWORD> keywords;
+    public List<KEYWORD> keywordList;
 
-    public CardKeywords(List<KEYWORD> keywords) {
-        this.keywords = keywords;
+    public CardKeywords(List<KEYWORD> keywordList) {
+        this.keywordList = keywordList;
     }
 
     public String toString() {
-        if (keywords.isEmpty()) {
+        if (keywordList.isEmpty()) {
             return "";
         }
-        return keywords.stream().map(CardKeywords::convertToString).collect(Collectors.joining(", "));
+        return keywordList.stream().map(KEYWORD::toString).collect(Collectors.joining(", "));
+    }
+
+    public List<String> getStringList() {
+        return keywordList.stream().map(KEYWORD::toString).collect(Collectors.toList());
     }
 }

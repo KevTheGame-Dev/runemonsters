@@ -23,7 +23,7 @@ public class GridControls extends JPanel {
         searchBar = new GridSearchBar(filtersActionListener);
         add(searchBar, BorderLayout.CENTER);
 
-        options = new GridOptions(filtersActionListener);
+        options = new GridOptions(windowWidth, borderPadding, filtersActionListener);
         options.setVisible(false);
         JButton optionsButton = JGenerator.createIconButton(
                 new ImageIcon(ImageUtil.loadImageResource(getClass(), "/FilterIcon.png")),

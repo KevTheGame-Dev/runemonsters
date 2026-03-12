@@ -85,9 +85,9 @@ public class CardPack {
 
     private String generateId() {
         if (isFoil) {
-            return "Foil-" + CardSet.convertToString(set) + "-" + CardRarity.convertToString(rarity);
+            return "Foil-" + set.toString() + "-" + rarity.toString();
         } else {
-            return "Norm-" + CardSet.convertToString(set) + "-" + CardRarity.convertToString(rarity);
+            return "Norm-" + set.toString() + "-" + rarity.toString();
         }
     }
 
@@ -97,8 +97,8 @@ public class CardPack {
             name += "Foil ";
         }
 
-        name += CardRarity.convertToString(rarity) + " ";
-        name += CardSet.convertToName(set) + " ";
+        name += rarity.toString() + " ";
+        name += set.toString() + " ";
         name += "Pack";
 
         return name;

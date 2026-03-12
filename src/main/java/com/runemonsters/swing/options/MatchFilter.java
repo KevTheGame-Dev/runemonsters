@@ -7,27 +7,27 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.Map;
 
-public class AdvancedDropdown extends JPanel {
-    public enum FILTER {
+public class MatchFilter extends JPanel {
+    public enum FILTER_TYPE {
         IS("is"),
         IS_NOT("is not");
 
-        private static final Map<String, FILTER> STRING_FILTER_MAP = Map.ofEntries(
+        private static final Map<String, FILTER_TYPE> STRING_FILTER_MAP = Map.ofEntries(
                 Map.entry("is", IS),
                 Map.entry("is not", IS_NOT)
         );
 
-        public static FILTER get(String symbol) {
+        public static FILTER_TYPE get(String symbol) {
             return STRING_FILTER_MAP.get(symbol);
         }
 
         public static String[] toStringArr() {
-            return Arrays.stream(FILTER.values()).map(FILTER::getStringVal).toArray(String[]::new);
+            return Arrays.stream(FILTER_TYPE.values()).map(FILTER_TYPE::getStringVal).toArray(String[]::new);
         }
 
         private final String stringVal;
 
-        FILTER(String stringVal) {
+        FILTER_TYPE(String stringVal) {
             this.stringVal = stringVal;
         }
 
@@ -40,13 +40,13 @@ public class AdvancedDropdown extends JPanel {
     private final JComboBox<String> filterOptions;
     private final JComboBox<String> filterValue;
 
-    public AdvancedDropdown(String filterName, String[] filterValues, ActionListener filtersActionListener) {
+    public MatchFilter(String filterName, String[] filterValues, ActionListener filtersActionListener) {
         setLayout(new FlowLayout());
 
         label = new JLabel(filterName);
         add(label);
 
-        filterOptions = new JComboBox<>(FILTER.toStringArr());
+        filterOptions = new JComboBox<>(FILTER_TYPE.toStringArr());
         filterOptions.addItemListener(e -> {
             filtersActionListener.actionPerformed(
                     new ActionEvent(filterOptions, ActionEvent.ACTION_PERFORMED, "changed")
@@ -63,11 +63,15 @@ public class AdvancedDropdown extends JPanel {
         add(filterValue);
     }
 
-    public FILTER getFilterOption() {
-        return FILTER.get((String) filterOptions.getSelectedItem());
+    public FILTER_TYPE getFilterOption() {
+        return FILTER_TYPE.get((String) filterOptions.getSelectedItem());
     }
 
     public String getFilterValue() {
         return (String) filterValue.getSelectedItem();
+    }
+
+    public Integer getFilterValueIndex() {
+        return filterValue.getSelectedIndex();
     }
 }

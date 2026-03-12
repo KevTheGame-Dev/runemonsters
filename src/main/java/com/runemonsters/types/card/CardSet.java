@@ -1,29 +1,37 @@
 package com.runemonsters.types.card;
 
-import org.apache.commons.collections4.MapUtils;
-
+import java.util.Arrays;
 import java.util.Map;
 
 public class CardSet {
     public enum SET {
-        UNKNOWN,
-        GIEL,
-        LBDV
-    }
+        UNKNOWN("Unknown"),
+        GIEL("GIEL"),
+        LBDV("LBDV");
 
-    private static final Map<SET, String> SET_TO_STRING_MAP = Map.ofEntries(
-            Map.entry(SET.UNKNOWN, "Unknown"),
-            Map.entry(SET.GIEL, "GIEL"),
-            Map.entry(SET.LBDV, "LBDV")
-    );
-    private static final Map<String, SET> STRING_TO_SET_MAP = MapUtils.invertMap(SET_TO_STRING_MAP);
+        private final String stringVal;
 
+        private static final Map<String, SET> STRING_SET_MAP = Map.ofEntries(
+                Map.entry("Unknown", UNKNOWN),
+                Map.entry("GIEL", GIEL),
+                Map.entry("LBDV", LBDV)
+        );
 
-    public static String convertToString(SET set) {
-        return SET_TO_STRING_MAP.getOrDefault(set, "Unknown");
-    }
-    public static SET fromString(String setString) {
-        return STRING_TO_SET_MAP.getOrDefault(setString, SET.UNKNOWN);
+        SET(String stringVal) {
+            this.stringVal = stringVal;
+        }
+
+        public String toString() {
+            return stringVal;
+        }
+
+        public static SET get(String stringVal) {
+            return STRING_SET_MAP.getOrDefault(stringVal, UNKNOWN);
+        }
+
+        public static String[] toStringArr() {
+            return Arrays.stream(SET.values()).map(SET::toString).toArray(String[]::new);
+        }
     }
 
     public static String convertToName(SET set) {
